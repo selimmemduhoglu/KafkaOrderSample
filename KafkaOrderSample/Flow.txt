@@ -1,0 +1,31 @@
+﻿KafkaOrdersApi/
+├── Controllers/
+│   ├── OrdersController.cs
+│   ├── HealthController.cs
+│   └── KafkaMonitorController.cs
+├── Models/
+│   ├── Order.cs
+│   ├── OrderStatus.cs
+│   └── Dtos/
+│       ├── CreateOrderDto.cs
+│       ├── OrderDto.cs
+│       └── OrderStatusDto.cs
+├── Services/
+│   ├── Interfaces/
+│   │   ├── IOrderService.cs
+│   │   ├── IKafkaProducerService.cs
+│   │   └── IKafkaConsumerService.cs
+│   ├── OrderService.cs
+│   ├── KafkaProducerService.cs
+│   └── KafkaConsumerService.cs
+├── Infrastructure/
+│   ├── KafkaConfiguration.cs
+│   ├── KafkaTopics.cs
+│   └── Repositories/
+│       ├── IOrderRepository.cs
+│       └── OrderRepository.cs
+├── BackgroundServices/
+│   └── KafkaConsumerHostedService.cs
+├── Program.cs
+├── Startup.cs
+└── appsettings.json
