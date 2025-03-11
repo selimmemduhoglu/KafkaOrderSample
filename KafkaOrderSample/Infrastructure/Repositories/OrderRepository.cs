@@ -41,24 +41,68 @@ public class OrderRepository : IOrderRepository
 
 	public Task<Order> AddAsync(Order order)
 	{
-		throw new NotImplementedException();
+		if (order == null)
+		{
+			throw new ArgumentNullException(nameof(order), "Order cannot be null");
+		}
+
+		_logger.LogInformation($"Adding new order {order.Id} for customer {order.CustomerName}");
+
+		lock (_lock)
+		{
+			_orders.Add(order);
+			return Task.FromResult(order);
+		}
 	}
 
 	public Task<bool> DeleteAsync(Guid id)
 	{
-		throw new NotImplementedException();
+		_logger.LogInformation($"Deleting order {id}");
+
+		lock (_lock)
+		{
+			var order = _orders.FirstOrDefault(o => o.Id == id);
+			if (order != null)
+			{
+				_orders.Remove(order);
+				return Task.FromResult(true);
+			}
+
+			return Task.FromResult(false);
+		}
 	}
-
-
-	
 
 	public Task<bool> OrderExistsAsync(Guid id)
 	{
-		throw new NotImplementedException();
+		lock (_lock)
+		{
+			var exists = _orders.Any(o => o.Id == id);
+			return Task.FromResult(exists);
+		}
 	}
 
 	public Task<Order> UpdateAsync(Order order)
 	{
-		throw new NotImplementedException();
+		if (order == null)
+		{
+			throw new ArgumentNullException(nameof(order), "Order cannot be null");
+		}
+
+		_logger.LogInformation($"Updating order {order.Id}, new status: {order.Status}");
+
+		lock (_lock)
+		{
+			var existingOrder = _orders.FirstOrDefault(o => o.Id == order.Id);
+			if (existingOrder == null)
+			{
+				throw new KeyNotFoundException($"Order with ID {order.Id} not found");
+			}
+
+			// Remove existing and add updated
+			_orders.Remove(existingOrder);
+			_orders.Add(order);
+
+			return Task.FromResult(order);
+		}
 	}
 }
