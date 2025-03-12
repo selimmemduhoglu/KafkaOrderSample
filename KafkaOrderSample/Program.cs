@@ -56,8 +56,13 @@ namespace KafkaOrdersApi
 			{
 				app.UseDeveloperExceptionPage();
 				app.UseSwagger();
-				app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Kafka Orders API v1"));
-			}
+                app.UseSwaggerUI(options =>
+                {
+                    // Swagger UI, /swagger/index.html üzerinden eriþilebilir olur.
+                    options.RoutePrefix = "swagger";
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "API Baþlýk v1");
+                });
+            }
 
 			app.UseHttpsRedirection();
 			app.UseRouting();
@@ -66,7 +71,19 @@ namespace KafkaOrdersApi
 
 			app.MapControllers(); // Modern kullaným
 
-			app.Run();
+
+            // Uygulama ana sayfaya ("/") istek geldiðinde Swagger UI'a yönlendirme yapýyoruz.
+            app.Use(async (context, next) =>
+            {
+                if (context.Request.Path == "/weatherforecast")
+                {
+                    context.Response.Redirect("/swagger/index.html");
+                    return;
+                }
+                await next();
+            });
+
+            app.Run();
 		}
 	}
 }
