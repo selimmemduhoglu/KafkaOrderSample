@@ -27,7 +27,7 @@ namespace KafkaOrdersApi.Controllers
 			{
 				_logger.LogInformation($"Creating new order for customer {createOrderDto.CustomerName}");
 
-				var order = await _orderService.CreateOrderAsync(createOrderDto);
+				OrderDto order = await _orderService.CreateOrderAsync(createOrderDto);
 
 				return CreatedAtAction(nameof(GetOrderById), new { id = order.Id }, order);
 			}

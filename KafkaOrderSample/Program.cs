@@ -1,10 +1,9 @@
-
+﻿
 
 using KafkaOrderSample.Infrastructure;
 using KafkaOrderSample.Infrastructure.Repositories;
 using KafkaOrderSample.Services;
 using KafkaOrderSample.Services.Interfaces;
-using KafkaOrdersApi.BackgroundServices;
 using Microsoft.OpenApi.Models;
 
 namespace KafkaOrdersApi
@@ -29,7 +28,7 @@ namespace KafkaOrdersApi
 			builder.Services.AddScoped<IOrderService, OrderService>();
 
 			// Register background services
-			builder.Services.AddHostedService<KafkaConsumerHostedService>();
+			builder.Services.AddHostedService<KafkaConsumerHostedService>(); // Singleton olarak çalışıyor.
 
 			builder.Services.AddControllers();
 
@@ -65,7 +64,7 @@ namespace KafkaOrdersApi
 			app.UseCors("AllowAll");
 			app.UseAuthorization();
 
-			app.MapControllers(); // Modern kullan�m
+			app.MapControllers(); // Modern kullaným
 
 			app.Run();
 		}

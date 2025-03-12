@@ -23,9 +23,9 @@ public class OrderService : IOrderService
 
 	public async Task<OrderDto> CreateOrderAsync(CreateOrderDto orderDto)
 	{
-		// Model doğrulama işlemlerini burada da yapabilirsiniz
+        // Model doğrulama işlemlerini burada da yapabilirsiniz
 
-		var order = new Order
+        Order order = new Order
 		{
 			Id = Guid.NewGuid(),
 			CustomerName = orderDto.CustomerName,
@@ -48,10 +48,10 @@ public class OrderService : IOrderService
 		order.TotalAmount = order.Items.Sum(item => item.Quantity * item.UnitPrice);
 
 		// Siparişi veritabanına kaydet
-		var savedOrder = await _orderRepository.AddAsync(order);
+		Order savedOrder = await _orderRepository.AddAsync(order);
 
 		// Siparişi Kafka'ya gönder
-		var sent = await _kafkaProducer.SendOrderAsync(savedOrder);
+		bool sent = await _kafkaProducer.SendOrderAsync(savedOrder);
 
 		if (!sent)
 		{
