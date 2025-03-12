@@ -1,5 +1,7 @@
 ﻿
 
+using KafkaOrderSample.Models;
+using KafkaOrderSample.Models.Dtos;
 using KafkaOrderSample.Services.Interfaces;
 
 namespace KafkaOrdersApi.BackgroundServices
@@ -45,14 +47,14 @@ namespace KafkaOrdersApi.BackgroundServices
 
 			// Unsubscribe from events
 			_kafkaConsumerService.OrderReceived -= OnOrderReceived;
-			_kafkaConsumerService.StatusUpdateReceived -= OnStatusUpdateReceived;
+            _kafkaConsumerService.StatusUpdateReceived -= OnStatusUpdateReceived;
 			_kafkaConsumerService.ConsumerErrorOccurred -= OnConsumerErrorOccurred;
 
 			await _kafkaConsumerService.StopConsumingAsync();
 			await base.StopAsync(cancellationToken);
 		}
 
-		private void OnOrderReceived(object sender, Models.Order order)
+		private void OnOrderReceived(object sender, Order order)
 		{
 			try
 			{
@@ -68,7 +70,7 @@ namespace KafkaOrdersApi.BackgroundServices
 					try
 					{
 						// Example: update order status to Processing after validation
-						await _orderService.UpdateOrderStatusAsync(order.Id, Models.OrderStatus.Processing,
+						await _orderService.UpdateOrderStatusAsync(order.Id, OrderStatus.Processing,
 							"Order received for processing");
 					}
 					catch (Exception ex)
@@ -83,7 +85,7 @@ namespace KafkaOrdersApi.BackgroundServices
 			}
 		}
 
-		private void OnStatusUpdateReceived(object sender, Models.Dtos.OrderStatusDto statusUpdate)
+		private void OnStatusUpdateReceived(object sender, OrderStatusDto statusUpdate)
 		{
 			try
 			{
@@ -96,7 +98,7 @@ namespace KafkaOrdersApi.BackgroundServices
 				{
 					try
 					{
-						if (Enum.TryParse<Models.OrderStatus>(statusUpdate.Status, out var orderStatus))
+						if (Enum.TryParse<OrderStatus>(statusUpdate.Status, out var orderStatus))
 						{
 							await _orderService.UpdateOrderStatusAsync(statusUpdate.OrderId, orderStatus,
 								statusUpdate.Notes);
