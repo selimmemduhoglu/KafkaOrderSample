@@ -8,54 +8,55 @@ using Microsoft.OpenApi.Models;
 
 namespace KafkaOrdersApi
 {
-	public class Program
-	{
-		public static void Main(string[] args)
-		{
-			var builder = WebApplication.CreateBuilder(args);
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
 
-			// Add services to the container.
+            // Add services to the container.
 
-			// Register configurations
-			builder.Services.Configure<KafkaConfiguration>(builder.Configuration.GetSection("Kafka"));
+            // Register configurationsü
+            IConfigurationSection kafkaConfiguration = builder.Configuration.GetSection("Kafka");
+            builder.Services.Configure<KafkaConfiguration>(kafkaConfiguration);
 
-			// Register repositories
-			builder.Services.AddSingleton<IOrderRepository, OrderRepository>();
+            // Register repositories
+            builder.Services.AddSingleton<IOrderRepository, OrderRepository>();
 
-			// Register services
-			builder.Services.AddSingleton<IKafkaProducerService, KafkaProducerService>();
-			builder.Services.AddSingleton<IKafkaConsumerService, KafkaConsumerService>();
-			builder.Services.AddScoped<IOrderService, OrderService>();
+            // Register services
+            builder.Services.AddSingleton<IKafkaProducerService, KafkaProducerService>();
+            builder.Services.AddSingleton<IKafkaConsumerService, KafkaConsumerService>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
 
-			// Register background services
-			builder.Services.AddHostedService<KafkaConsumerHostedService>(); // Singleton olarak çalışıyor.
+            // Register background services
+            builder.Services.AddHostedService<KafkaConsumerHostedService>(); // Singleton olarak çalışıyor.
 
-			builder.Services.AddControllers();
+            builder.Services.AddControllers();
 
-			// Add Swagger
-			builder.Services.AddSwaggerGen(c =>
-			{
-				c.SwaggerDoc("v1", new OpenApiInfo { Title = "Kafka Orders API", Version = "v1" });
-			});
+            // Add Swagger
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Kafka Orders API", Version = "v1" });
+            });
 
-			// Add CORS
-			builder.Services.AddCors(options =>
-			{
-				options.AddPolicy("AllowAll", policy =>
-				{
-					policy.AllowAnyOrigin()
-						  .AllowAnyMethod()
-						  .AllowAnyHeader();
-				});
-			});
+            // Add CORS
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
 
-			var app = builder.Build();
+            var app = builder.Build();
 
-			// Configure the HTTP request pipeline.
-			if (app.Environment.IsDevelopment())
-			{
-				app.UseDeveloperExceptionPage();
-				app.UseSwagger();
+            // Configure the HTTP request pipeline.
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+                app.UseSwagger();
                 app.UseSwaggerUI(options =>
                 {
                     // Swagger UI, /swagger/index.html üzerinden eriþilebilir olur.
@@ -64,12 +65,12 @@ namespace KafkaOrdersApi
                 });
             }
 
-			app.UseHttpsRedirection();
-			app.UseRouting();
-			app.UseCors("AllowAll");
-			app.UseAuthorization();
+            app.UseHttpsRedirection();
+            app.UseRouting();
+            app.UseCors("AllowAll");
+            app.UseAuthorization();
 
-			app.MapControllers(); // Modern kullaným
+            app.MapControllers(); // Modern kullaným
 
 
             // Uygulama ana sayfaya ("/") istek geldiðinde Swagger UI'a yönlendirme yapýyoruz.
@@ -84,6 +85,6 @@ namespace KafkaOrdersApi
             });
 
             app.Run();
-		}
-	}
+        }
+    }
 }

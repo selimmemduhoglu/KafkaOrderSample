@@ -97,7 +97,7 @@ public class KafkaProducerService : IKafkaProducerService, IDisposable
     {
         try
         {
-            var statusUpdate = new OrderStatusDto
+            OrderStatusDto statusUpdate = new OrderStatusDto
             {
                 OrderId = orderId,
                 Status = status.ToString(),
